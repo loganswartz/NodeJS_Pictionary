@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/loganswartz/NodeJS_Pictionary/issues"
   },
-  "homepage": "https://github.com/loganswartz/NodeJS_Pictionary#readme"
+  "homepage": "https://github.com/loganswartz/NodeJS_Pictionary#readme",
+  "dependencies": {
+    "socket.io": "^2.2.0"
+  }
 }
