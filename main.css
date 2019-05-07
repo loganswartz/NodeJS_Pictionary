@@ -1,5 +1,6 @@
 * {
 	box-sizing: border-box;
+	transition: 0.5s;
 }
 
 html, body {
@@ -7,7 +8,13 @@ html, body {
 	padding: 0;
 	width: 100vw;
 	height: 100vh;
-    font-family: 'Open Sans', sans-serif;
+	font-family: 'Open Sans', sans-serif;
+	background-color: aliceblue;
+}
+
+.page {
+	width: 100vw;
+	height: 100vh;
 }
 
 main {
@@ -23,22 +30,34 @@ input[type=text], button {
 	padding: 1rem;
 	border: solid 0.3rem rgba(0, 0, 0, 0.2);
 	border-radius: 0.5rem;
+	text-align: center;
+}
+
+input[type=text]:focus {
+	border-color: rgba(48,108,234,0.8);
+	box-shadow: 0 0 0.2rem #306cea;
 }
 
 button {
 	display: inline;
 	background-color: #306cea;
 	color: white;
-	transition: 0.5s;
 }
 
 button:hover {
 	cursor: pointer;
-	box-shadow: 0 0 0.5rem #306cea;
-	transition: 0.5s;
+	box-shadow: 0 0 0.3rem #306cea;
 }
 
-#login {
+#about-the-app {
+	position: absolute;
+	top: 0%;
+	left: 50%;
+	transform: translate(-50%, 0%);
+	text-align: center;
+}
+
+#login-box {
 	display: flex;
 	flex-direction: column;
 	position: absolute;
@@ -57,10 +76,11 @@ button:hover {
 	display: none;
 }
 
-#guesserInput {
+#guesser-input {
 	display: block;
 	position: absolute;
 	bottom: 5%;
 	left: 50%;
 	transform: translate(-50%, 0%);
 }
+

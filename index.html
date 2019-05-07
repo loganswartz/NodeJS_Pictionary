@@ -9,17 +9,22 @@
 	<link rel="stylesheet" href="main.css">
 </head>
 <body>
-	<div id='login'>
-		<button><b>Host a new game</b></button>
-		<span style='margin-top: 2rem; margin-bottom: 2rem;'>or</span>
-		<span>Join a game:</span>
-		<input id='joinGame' type='text' placeholder='Enter the game ID'>
+	<div id='login' class='page'>
+		<div id='about-the-app'>
+			<h1>Pictionary</h1>
+			<h4>A NodeJS app by Aaron, Yedidiya, and Logan</h4>
+		</div>
+		<div id='login-box'>
+			<button><b>Host a new game</b></button>
+			<span style='margin-top: 2rem; margin-bottom: 2rem;'><b>or</b></span>
+			<input id='join-game' type='text' placeholder='Enter the game ID'>
+		</div>
 	</div>
-	<div id='pictionary'>
+	<div id='pictionary' class='page'>
 		<main>
 
 		</main>
-		<input id='guesserInput' type='text' placeholder='What are they drawing?'>
+		<input id='guesser-input' type='text' placeholder='What are they drawing?'>
 	</div>
 </body>
 </html>
