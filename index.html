@@ -17,12 +17,14 @@
 			<h4>A NodeJS app by Aaron, Yedidiya, and Logan</h4>
 		</div>
 		<div id='login-box'>
-			<button><b>Host a new game</b></button>
+			<button id="login-button"><b>Host a new game</b></button>
 			<span style='margin-top: 2rem; margin-bottom: 2rem;'><b>or</b></span>
 			<input id='join-game' type='text' placeholder='Enter the game ID'>
+			<span id="game-not-found" style="display: none; color: red;">The requested game does not exist. Check the Game code and try again.</span>
 		</div>
 	</div>
 	<div id='pictionary' class='page'>
+		<span id="game-code"></span>
 		<main>
 
 		</main>
@@ -36,11 +38,35 @@
 
 			let login = document.querySelector('#login');
 			let pictionary = document.querySelector('#pictionary');
+			let loginButton = document.querySelector('#login-button');
+			let joinGame = document.querySelector('#join-game');
 
-			login.addEventListener('click', () => {
+			let gameNotFound = document.querySelector('#game-not-found');
+			let gameCode = document.querySelector('#game-code');
+
+			loginButton.addEventListener('click', () => {
+				socket.emit('new game');
 				login.style.display = 'none';
 				pictionary.style.display = 'block';
-			})
+			});
+
+			joinGame.addEventListener('change', (event) => {
+				socket.emit('join game', joinGame.value);
+			});
+
+			socket.on('game found', () => {
+				login.style.display = 'none';
+				pictionary.style.display = 'block';
+				gameNotFound.style.display = 'none';
+			});
+
+			socket.on('game not found', () => {				
+				gameNotFound.style.display = 'block';
+			});
+
+			socket.on('game code', (code) => {
+				gameCode.innerHTML += code;
+			});
 		});
 	</script>
 </body>
