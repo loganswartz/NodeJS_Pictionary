@@ -6,21 +6,15 @@ const io = require('socket.io').listen(server);
 const port = process.env.PORT || 3000;
 const fs = require('fs');
 
-let players = [];
-let connections = []
+let connections = [];
 let games = {};
-
 let gameCode = 0;
 let wordList = [];
 
 server.listen(port);
-console.log('Server Running...')
+console.log('Server Running...');
 
 app.use(express.static('public'));
-
-app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/index.html');
-});
 
 
 // initialize word list
@@ -71,6 +65,10 @@ io.sockets.on('connection', (socket) => {
 		} else {
 			socket.emit('game_not_found');
 		}
+	});
+
+	socket.on('draw_event', (line_data) => {
+		
 	});
 
 });
