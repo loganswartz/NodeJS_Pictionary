@@ -17,14 +17,18 @@
 			<h4>A NodeJS app by Aaron, Yedidiya, and Logan</h4>
 		</div>
 		<div id='login-box'>
-			<button id="login-button"><b>Host a new game</b></button>
+			<button id="new-game-button"><b>Host a new game</b></button>
 			<span style='margin-top: 2rem; margin-bottom: 2rem;'><b>or</b></span>
 			<input id='join-game' type='text' placeholder='Enter the game ID'>
 			<span id="game-not-found" style="display: none; color: red;">The requested game does not exist. Check the Game code and try again.</span>
 		</div>
+		<div id='player-name-box' style='display: none;'>
+			<input type='text' id='player-name' placeholder='Enter a nickname'>
+		</div>
 	</div>
 	<div id='pictionary' class='page'>
 		<span id="game-code"></span>
+		<span id="draw-info"></span>
 		<main>
 
 		</main>
@@ -37,35 +41,65 @@
 			let socket = io.connect();
 
 			let login = document.querySelector('#login');
+			let loginBox = document.querySelector('#login-box');
+			let playerNameBox = document.querySelector('#player-name-box');
+			let playerName = document.querySelector('#player-name');
 			let pictionary = document.querySelector('#pictionary');
-			let loginButton = document.querySelector('#login-button');
+			let newGameButton = document.querySelector('#new-game-button');
 			let joinGame = document.querySelector('#join-game');
-
+			let drawInfo = document.querySelector('#draw-info');
+			let guesserInput = document.querySelector('#guesser-input');
 			let gameNotFound = document.querySelector('#game-not-found');
 			let gameCode = document.querySelector('#game-code');
 
-			loginButton.addEventListener('click', () => {
-				socket.emit('new game');
-				login.style.display = 'none';
-				pictionary.style.display = 'block';
+			let gameInitMode = '';
+
+			newGameButton.addEventListener('click', () => {
+				loginBox.style.display = 'none';
+				playerNameBox.style.display = 'block';
+				gameInitMode = 'new';
 			});
 
-			joinGame.addEventListener('change', (event) => {
-				socket.emit('join game', joinGame.value);
+			joinGame.addEventListener('change', () => {
+				loginBox.style.display = 'none';
+				playerNameBox.style.display = 'block';
+				gameInitMode = 'join';
 			});
 
-			socket.on('game found', () => {
+			playerName.addEventListener('change', () => {
 				login.style.display = 'none';
 				pictionary.style.display = 'block';
+				if(gameInitMode === 'new') {
+					socket.emit('new_game', playerName.value);
+				} else {
+					socket.emit('join_game', joinGame.value, playerName.value);
+				}
+			});
+
+			socket.on('game_found', () => {
+				login.style.display = 'none';
 				gameNotFound.style.display = 'none';
 			});
 
-			socket.on('game not found', () => {				
+			socket.on('game_not_found', () => {
 				gameNotFound.style.display = 'block';
 			});
 
-			socket.on('game code', (code) => {
+			socket.on('game_code', (code) => {
 				gameCode.innerHTML += code;
+			});
+
+			socket.on('game_word', (word) => {
+				drawInfo.innerHTML = 'You are drawing: "' + word + '"';
+			});
+
+			socket.on('player_role', (role) => {
+				if(role === true) {
+					guesserInput.style.display = 'none';
+					drawInfo.style.display = 'block';
+				} else {
+					pictionary.style.display = 'block';
+				}
 			});
 		});
 	</script>
