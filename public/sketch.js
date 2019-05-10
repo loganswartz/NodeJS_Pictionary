@@ -16,7 +16,7 @@ function mouseDragged() {
 		"x2": pmouseX,
 		"y2": pmouseY,
 		"weight": stroke_weight,
-		"color": stroke_color;
+		"color": stroke_color
 	}
 	socket.emit('draw_event', line_data);
 }

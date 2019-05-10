@@ -68,7 +68,7 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('draw_event', (line_data) => {
-		
+		console.log('draw_event recieved.');
 	});
 
 });
