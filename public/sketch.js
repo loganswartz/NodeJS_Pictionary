@@ -1,12 +1,10 @@
 let canvas;
-let socket;
 let stroke_color;
 let stroke_weight;
 
 
 function setup() {
 	canvas = createCanvas(windowWidth, windowHeight);
-	socket = io.connect();
 	stroke_color = 0;
 	stroke_weight = 6;
 
