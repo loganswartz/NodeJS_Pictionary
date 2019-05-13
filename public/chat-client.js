@@ -11,6 +11,7 @@ let drawInfo = document.querySelector('#draw-info');
 let guesserInput = document.querySelector('#guesser-input');
 let gameNotFound = document.querySelector('#game-not-found');
 let gameCode = document.querySelector('#game-code');
+let playerInfo = document.querySelector('#player-info');
 
 // the validated game code of this client to be shared by other files
 let clientGameCode = '';
@@ -55,6 +56,14 @@ socket.on('game_code', (code) => {
 
 socket.on('game_word', (word) => {
     drawInfo.innerHTML = 'You are drawing: "' + word + '"';
+});
+
+socket.on('active_players', (players) => {
+    console.log(players)
+    playerInfo.innerHTML = '';
+    players.forEach((player) => {
+        playerInfo.innerHTML += `<span>${player}</span>`;
+    });
 });
 
 socket.on('player_role', (role) => {

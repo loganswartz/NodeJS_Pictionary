@@ -49,6 +49,7 @@ io.sockets.on('connection', (socket) => {
 		games[gameCode].players[playerName] = new user(playerName, gameCode, socket);
 
 		socket.join(gameCode);
+		io.to(gameCode).emit('active_players', getPlayerNames(gameCode));
 
 		socket.emit('game_word', currentWord);
 		socket.emit('game_code', gameCode);
@@ -58,9 +59,10 @@ io.sockets.on('connection', (socket) => {
 	socket.on('join_game', (gameCode, playerName) => {		
 		if (games.hasOwnProperty(gameCode)) {
 
-			socket.join(gameCode);
-
 			games[gameCode].players[playerName] = new user(playerName, gameCode, socket);
+
+			socket.join(gameCode);
+			io.to(gameCode).emit('active_players', getPlayerNames(gameCode));
 			
 			socket.emit('player_role', games[gameCode].players[playerName].isDrawer());
 			socket.emit('game_found');
@@ -86,4 +88,13 @@ function getGameWord(words) {
 
 function getRandomNumberInRange(min, max) {
 	return Math.floor(Math.random() * (max - min) + min);
+}
+
+function getPlayerNames(gameCode) {
+	let playerNames = [];
+	Object.values(games[gameCode].players).forEach((player) => {
+		playerNames.push(player.name);
+	});
+
+	return playerNames;
 }

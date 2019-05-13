@@ -114,8 +114,14 @@ button:hover {
 }
 
 #player-info {
+	font-size: 1.2rem;
 	position: absolute;
 	left: 5vh;
 	top: 3vh;
 }
 
+#player-info span {
+	display: block;
+	text-align: left;
+	width: 100%;
+}
