@@ -30,6 +30,6 @@ function mouseDragged() {
 		"weight": stroke_weight,
 		"color": stroke_color
 	}
-	socket.emit('draw_event', line_data);
+	socket.emit('draw_event', line_data, clientGameCode);
 }
 

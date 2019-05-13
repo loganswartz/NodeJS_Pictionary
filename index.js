@@ -6,6 +6,8 @@ const io = require('socket.io').listen(server);
 const port = process.env.PORT || 3000;
 const fs = require('fs');
 
+const user = require('./user.js').default;
+
 let connections = [];
 let games = {};
 let gameCode = 0;
@@ -41,40 +43,41 @@ io.sockets.on('connection', (socket) => {
 		gameCode = generateGameCode();
 		currentWord = getGameWord(wordList);
 		games[gameCode] = {
-			'connections': [socket],
-			'players': {},   // true = drawer, false = guesser
+			'players': {},
 			'current_word': currentWord
 		}
-		games[gameCode].players[playerName] = true;   // set host to drawer
+		games[gameCode].players[playerName] = new user(playerName, gameCode, socket);
+
+		socket.join(gameCode);
 
 		socket.emit('game_word', currentWord);
 		socket.emit('game_code', gameCode);
-		socket.emit('player_role', games[gameCode].players[playerName]);
-
-		console.log(games[gameCode].players);
+		socket.emit('player_role', games[gameCode].players[playerName].isDrawer());
 	});
 
-	socket.on('join_game', (gameCode, playerName) => {
+	socket.on('join_game', (gameCode, playerName) => {		
 		if (games.hasOwnProperty(gameCode)) {
-			games[gameCode].connections.push(socket);
-			games[gameCode].players[playerName] = false;   // set new player to guesser
-			socket.emit('player_role', games[gameCode].players[playerName]);
+
+			socket.join(gameCode);
+
+			games[gameCode].players[playerName] = new user(playerName, gameCode, socket);
+			
+			socket.emit('player_role', games[gameCode].players[playerName].isDrawer());
 			socket.emit('game_found');
 			socket.emit('game_code', gameCode);
-			console.log(games[gameCode].players);
 		} else {
 			socket.emit('game_not_found');
 		}
 	});
 
-	socket.on('draw_event', (line_data) => {
-		io.sockets.emit('draw_data', line_data);
+	socket.on('draw_event', (line_data, gameCode) => {
+		socket.broadcast.to(gameCode).emit('draw_data', line_data);
 	});
 
 });
 
 function generateGameCode() {
-	return getRandomNumberInRange(100000, 999999);
+	return String(getRandomNumberInRange(100000, 999999));
 }
 
 function getGameWord(words) {

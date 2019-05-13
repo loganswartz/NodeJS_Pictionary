@@ -12,6 +12,9 @@ let guesserInput = document.querySelector('#guesser-input');
 let gameNotFound = document.querySelector('#game-not-found');
 let gameCode = document.querySelector('#game-code');
 
+// the validated game code of this client to be shared by other files
+let clientGameCode = '';
+
 let gameInitMode = '';
 
 newGameButton.addEventListener('click', () => {
@@ -47,6 +50,7 @@ socket.on('game_not_found', () => {
 
 socket.on('game_code', (code) => {
     gameCode.innerHTML += code;
+    clientGameCode = code;
 });
 
 socket.on('game_word', (word) => {
@@ -59,5 +63,5 @@ socket.on('player_role', (role) => {
         drawInfo.style.display = 'block';
     } else {
         pictionary.style.display = 'block';
-    }
+    }    
 });
