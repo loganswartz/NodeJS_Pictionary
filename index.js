@@ -6,7 +6,7 @@ const io = require('socket.io').listen(server);
 const port = process.env.PORT || 3000;
 const fs = require('fs');
 
-const user = require('./user.js').default;
+const user = require('./user.js');
 
 let connections = [];
 let games = {};
