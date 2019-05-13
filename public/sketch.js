@@ -1,12 +1,26 @@
+let canvas;
+let socket;
+let stroke_color;
+let stroke_weight;
+
 
 function setup() {
-	let canvas = createCanvas(windowWidth, windowHeight);
+	canvas = createCanvas(windowWidth, windowHeight);
+	socket = io.connect();
+	stroke_color = 0;
+	stroke_weight = 6;
+
+	socket.on('draw_data', drawReceivedData);
 	canvas.parent('draw-window');
 }
 
+function drawReceivedData(data) {
+	strokeWeight(data.weight);
+	stroke(data.color);
+	line(data.x1, data.y1, data.x2, data.y2)
+}
+
 function mouseDragged() {
-	let stroke_color = 0;
-	let stroke_weight = 6;
 	strokeWeight(stroke_weight);
 	stroke(stroke_color);
 	line(mouseX, mouseY, pmouseX, pmouseY);
