@@ -6,8 +6,6 @@ const io = require('socket.io').listen(server);
 const port = process.env.PORT || 3000;
 const fs = require('fs');
 
-const user = require('./user.js');
-
 let connections = [];
 let games = {};
 let gameCode = 0;
@@ -34,38 +32,70 @@ io.sockets.on('connection', (socket) => {
 	connections.push(socket);
 	console.log(`Connected: ${connections.length} sockets connected`);
 
+	socket.emit('query_ingame');
+	socket.on('answer_ingame', (inGame) => {
+		if(inGame === true) {
+			socket.emit('quit_game');
+		}
+	});
+
 	socket.on('disconnect', () => {
+		if(games.hasOwnProperty(socket.gameCode)) {
+			games[socket.gameCode].players.splice(games[socket.gameCode].players.indexOf(socket.playerName), 1);
+			io.to(socket.gameCode).emit('active_players', getPlayerNames(gameCode));
+			if(socket.role === 'drawer') {
+				io.to(socket.gameCode).emit('quit_game');
+			}
+		}
+		//console.log(io.sockets.adapter.rooms[gameCode]);
 		connections.splice(connections.indexOf(socket), 1);
+		console.log(`Player "${socket.playerName}" has left game #${socket.gameCode}.`);
 		console.log(`Disconnected: ${connections.length} sockets connected`);
 	});
 
 	socket.on('new_game', (playerName) => {
+		// initialize game
 		gameCode = generateGameCode();
 		currentWord = getGameWord(wordList);
 		games[gameCode] = {
-			'players': {},
+			'players': [],
 			'current_word': currentWord
 		}
-		games[gameCode].players[playerName] = new user(playerName, gameCode, socket);
+		console.log(`New game started (#${gameCode}) with the word "${currentWord}".`);
 
-		socket.join(gameCode);
-		io.to(gameCode).emit('active_players', getPlayerNames(gameCode));
+		// initialize player
+		socket.gameCode = gameCode;
+		socket.playerName = playerName;
+		socket.role = 'drawer';
+		socket.score = 0;
 
+		// join player to game
+		games[gameCode].players.push(playerName);
+		socket.join(gameCode);  // this needs to be before the room broadcast
+		io.to(socket.gameCode).emit('active_players', getPlayerNames(gameCode));
+
+		// tell client what to do
 		socket.emit('game_word', currentWord);
 		socket.emit('game_code', gameCode);
-		socket.emit('player', games[gameCode].players[playerName].json());
+		socket.emit('player_role', socket.role);
 	});
 
-	socket.on('join_game', (gameCode, playerName) => {		
+	socket.on('join_game', (gameCode, playerName) => {
 		if (games.hasOwnProperty(gameCode)) {
+			// initialize player
+			socket.gameCode = gameCode;
+			socket.playerName = playerName;
+			socket.role = 'guesser';
+			socket.score = 0;
 
-			games[gameCode].players[playerName] = new user(playerName, gameCode, socket);
+			// join player to game
+			games[gameCode].players.push(playerName);
+			socket.join(gameCode);  // this needs to be before the room broadcast
+			io.to(socket.gameCode).emit('active_players', getPlayerNames(gameCode));
+			console.log(`Player "${playerName}" has joined game #${gameCode}.`);
 
-			games[gameCode].players[playerName].setGuesser();
-			socket.join(gameCode);
-			io.to(gameCode).emit('active_players', getPlayerNames(gameCode));
-			
-			socket.emit('player', games[gameCode].players[playerName].json());
+			// tell client what to do
+			socket.emit('player_role', socket.role);
 			socket.emit('game_found');
 			socket.emit('game_code', gameCode);
 		} else {
@@ -73,8 +103,11 @@ io.sockets.on('connection', (socket) => {
 		}
 	});
 
-	socket.on('draw_event', (line_data, gameCode) => {
-		socket.broadcast.to(gameCode).emit('draw_data', line_data);
+	socket.on('draw_event', (line_data) => {
+		// block guessers from sending drawings to the other players
+		if(socket.role === 'drawer') {
+			socket.broadcast.to(socket.gameCode).emit('draw_data', line_data);
+		}
 	});
 
 });
@@ -92,10 +125,13 @@ function getRandomNumberInRange(min, max) {
 }
 
 function getPlayerNames(gameCode) {
-	let playerNames = [];
-	Object.values(games[gameCode].players).forEach((player) => {
-		playerNames.push(player.name);
-	});
+	return games[gameCode].players;
+}
 
-	return playerNames;
+function getSocket(socketId) {
+	// supposedly this should allow grabbing other sockets based on events from a different socket, doesn't seem to work though
+	let namespace = null;
+	let ns = io.of(namespace || "/");
+	let socket = ns.connected[socketId];
+	return socket;
 }
