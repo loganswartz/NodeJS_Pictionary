@@ -16,6 +16,9 @@ let playerInfo = document.querySelector('#player-info');
 // the validated game code of this client to be shared by other files
 let clientGameCode = '';
 
+// indicate whether the client is a drawer or not
+let canDraw = false;
+
 let gameInitMode = '';
 
 newGameButton.addEventListener('click', () => {
@@ -66,10 +69,11 @@ socket.on('active_players', (players) => {
     });
 });
 
-socket.on('player_role', (role) => {
-    if (role === true) {
+socket.on('player', (player) => {
+    if (player.drawer === true) {
         guesserInput.style.display = 'none';
         drawInfo.style.display = 'block';
+        canDraw = true;
     } else {
         pictionary.style.display = 'block';
     }    

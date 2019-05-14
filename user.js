@@ -15,6 +15,15 @@ class User {
     setGuesser() {
         this.drawer = false;
     }
+
+    json() {
+        return {
+            'name': this.name,
+            'gameCode': this.gameCode,
+            'drawer': this.drawer,
+            'score': this.score
+        }
+    }
 }
 
 module.exports = User;

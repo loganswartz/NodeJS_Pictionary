@@ -53,7 +53,7 @@ io.sockets.on('connection', (socket) => {
 
 		socket.emit('game_word', currentWord);
 		socket.emit('game_code', gameCode);
-		socket.emit('player_role', games[gameCode].players[playerName].isDrawer());
+		socket.emit('player', games[gameCode].players[playerName].json());
 	});
 
 	socket.on('join_game', (gameCode, playerName) => {		
@@ -61,10 +61,11 @@ io.sockets.on('connection', (socket) => {
 
 			games[gameCode].players[playerName] = new user(playerName, gameCode, socket);
 
+			games[gameCode].players[playerName].setGuesser();
 			socket.join(gameCode);
 			io.to(gameCode).emit('active_players', getPlayerNames(gameCode));
 			
-			socket.emit('player_role', games[gameCode].players[playerName].isDrawer());
+			socket.emit('player', games[gameCode].players[playerName].json());
 			socket.emit('game_found');
 			socket.emit('game_code', gameCode);
 		} else {
