@@ -123,6 +123,7 @@ io.sockets.on('connection', (socket) => {
 		if(guess.toLowerCase() === getCurrentWord(socket.gameCode).toLowerCase()) {
 			io.to(socket.gameCode).emit('winner', socket.playerName);
 			console.log(`Game #${socket.gameCode}: ${socket.playerName} won! (word was "${getCurrentWord(socket.gameCode)}")`);
+			setTimeout(startNewGame, 10000, socket);
 		} else {
 			// send toast showing incorrect guess
 		}
@@ -161,4 +162,13 @@ function getClientsFromGame(gameCode) {
 
 function getCurrentWord(gameCode) {
 	return gameWords[gameCode];
+}
+
+function startNewGame(socket) {
+	gameWords[socket.gameCode] = getGameWord(wordList);
+	io.to(socket.gameCode).emit('player_role', 'guesser');   // set all players to guessers and then immediately set the previous winner to a drawer
+	socket.role = 'drawer';
+	socket.emit('player_role', socket.role);
+	socket.emit('game_word', getCurrentWord(socket.gameCode));
+	io.to(socket.gameCode).emit('start_new_game');
 }

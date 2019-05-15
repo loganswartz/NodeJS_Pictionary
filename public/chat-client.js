@@ -1,10 +1,10 @@
 let socket = io.connect();
 
-let login = document.querySelector('#login');
+let loginPage = document.querySelector('#login');
 let loginBox = document.querySelector('#login-box');
 let playerNameBox = document.querySelector('#player-name-box');
 let playerName = document.querySelector('#player-name');
-let pictionary = document.querySelector('#pictionary');
+let pictionaryPage = document.querySelector('#pictionary');
 let newGameButton = document.querySelector('#new-game-button');
 let joinGame = document.querySelector('#join-game');
 let drawInfo = document.querySelector('#draw-info');
@@ -12,7 +12,7 @@ let guesserInput = document.querySelector('#guesser-input');
 let gameNotFound = document.querySelector('#game-not-found');
 let gameCode = document.querySelector('#game-code');
 let playerInfo = document.querySelector('#player-info');
-let winnerScreen = document.querySelector('#winner-screen');
+let winnerPage = document.querySelector('#winner-screen');
 let winnerText = document.querySelector('#winner-text');
 let inGame = false;
 
@@ -24,6 +24,13 @@ function clear_inputs() {
 	playerName.value = '';
 	joinGame.value = '';
 	guesserInput.value = '';
+}
+
+function hide_all_pages() {
+	let pages = document.querySelectorAll('.page');
+	for(i=0; i<pages.length; i++) {
+		pages[i].style.display = 'none';
+	}
 }
 
 newGameButton.addEventListener('click', () => {
@@ -48,9 +55,9 @@ playerName.addEventListener('keyup', (e) => {
 		} else {
 			socket.emit('join_game', joinGame.value, playerName.value);
 		}
-		login.style.display = 'none';
+		hide_all_pages();
 		gameNotFound.style.display = 'none';
-		pictionary.style.display = 'block';
+		pictionaryPage.style.display = 'block';
 		playerNameBox.style.display = 'none';
 	}
 });
@@ -63,19 +70,20 @@ guesserInput.addEventListener('keyup', (e) => {
 });
 
 socket.on('game_found', () => {
-	login.style.display = 'none';
+	hide_all_pages();
+	loginPage.style.display = 'none';
 	gameNotFound.style.display = 'none';
-	pictionary.style.display = 'block';
 	playerNameBox.style.display = 'none';
+	pictionaryPage.style.display = 'block';
 	inGame = true;
 });
 
 socket.on('game_not_found', () => {
+	hide_all_pages();
+	loginPage.style.display = 'block';
 	loginBox.style.display = 'flex';
-	playerNameBox.style.display = 'none';
 	gameNotFound.style.display = 'block';
-	login.style.display = 'block';
-	pictionary.style.display = 'none';
+	playerNameBox.style.display = 'none';
 });
 
 socket.on('game_code', (code) => {
@@ -97,7 +105,7 @@ socket.on('active_players', (players) => {
 
 socket.on('player_role', (role) => {
 	if (role === 'drawer') {
-		pictionary.style.display = 'block';
+		pictionaryPage.style.display = 'block';
 		drawInfo.style.display = 'block';
 		guesserInput.style.display = 'none';
 		// enable drawing if drawer
@@ -116,8 +124,9 @@ socket.on('player_role', (role) => {
 		socket.emit('draw_event', line_data);
 		}
 	} else {
-		pictionary.style.display = 'block';
+		pictionaryPage.style.display = 'block';
 		drawInfo.style.display = 'none';
+		guesserInput.style.display = 'block';
 		// disable drawing if guesser
 		mouseDragged = function() {return};
 	}
@@ -133,8 +142,8 @@ socket.on('query_ingame', () => {
 
 
 socket.on('winner', (playerName) => {
-	pictionary.style.display = 'none';
-	winnerScreen.style.display = 'block';
+	hide_all_pages();
+	winnerPage.style.display = 'block';
 	winnerText.innerHTML = playerName + ' was the winner!';
 })
 
@@ -146,3 +155,10 @@ socket.on('player_left', (name) => {
 	M.toast({html: `${name} has left the game`});
 });
 
+socket.on('start_new_game', () => {
+	hide_all_pages();
+	gameNotFound.style.display = 'none';
+	pictionaryPage.style.display = 'block';
+	playerNameBox.style.display = 'none';
+	clear();
+});
