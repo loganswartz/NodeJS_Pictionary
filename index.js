@@ -113,6 +113,13 @@ io.sockets.on('connection', (socket) => {
 		}
 	});
 
+	socket.on('make_guess', (guess) => {
+		if(guess === getCurrentWord(socket.gameCode)) {
+			io.to(socket.gameCode).emit('winner', socket.playerName);
+		} else {
+			// send toast showing incorrect guess
+		}
+	});
 });
 
 function generateGameCode() {

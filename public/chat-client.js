@@ -12,6 +12,8 @@ let guesserInput = document.querySelector('#guesser-input');
 let gameNotFound = document.querySelector('#game-not-found');
 let gameCode = document.querySelector('#game-code');
 let playerInfo = document.querySelector('#player-info');
+let winnerScreen = document.querySelector('#winner-screen');
+let winnerText = document.querySelector('#winner-text');
 let inGame = false;
 
 // the validated game code of this client to be shared by other files
@@ -30,30 +32,50 @@ newGameButton.addEventListener('click', () => {
 	gameInitMode = 'new';
 });
 
-joinGame.addEventListener('change', () => {
-	loginBox.style.display = 'none';
-	playerNameBox.style.display = 'block';
-	gameInitMode = 'join';
+joinGame.addEventListener('keyup', (e) => {
+	if(e.keyCode === 13) {
+		loginBox.style.display = 'none';
+		playerNameBox.style.display = 'block';
+		gameInitMode = 'join';
+		playerName.focus();
+	}
 });
 
-playerName.addEventListener('change', () => {
-	login.style.display = 'none';
-	pictionary.style.display = 'block';
-	if (gameInitMode === 'new') {
-		socket.emit('new_game', playerName.value);
-	} else {
-		socket.emit('join_game', joinGame.value, playerName.value);
+playerName.addEventListener('keyup', (e) => {
+	if(e.keyCode === 13) {
+		if (gameInitMode === 'new') {
+			socket.emit('new_game', playerName.value);
+		} else {
+			socket.emit('join_game', joinGame.value, playerName.value);
+		}
+		login.style.display = 'none';
+		gameNotFound.style.display = 'none';
+		pictionary.style.display = 'block';
+		playerNameBox.style.display = 'none';
+	}
+});
+
+guesserInput.addEventListener('keyup', (e) => {
+	if(e.keyCode === 13 && guesserInput != '') {
+		socket.emit('make_guess', guesserInput.value);
+		guesserInput.value = '';
 	}
 });
 
 socket.on('game_found', () => {
 	login.style.display = 'none';
 	gameNotFound.style.display = 'none';
+	pictionary.style.display = 'block';
+	playerNameBox.style.display = 'none';
 	inGame = true;
 });
 
 socket.on('game_not_found', () => {
+	loginBox.style.display = 'flex';
+	playerNameBox.style.display = 'none';
 	gameNotFound.style.display = 'block';
+	login.style.display = 'block';
+	pictionary.style.display = 'none';
 });
 
 socket.on('game_code', (code) => {
@@ -108,3 +130,9 @@ socket.on('quit_game', () => {
 socket.on('query_ingame', () => {
 	socket.emit('answer_ingame', inGame);
 });
+
+socket.on('winner', (playerName) => {
+	pictionary.style.display = 'none';
+	winnerScreen.style.display = 'block';
+	winnerText.innerHTML = playerName + ' was the winner!';
+})

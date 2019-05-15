@@ -8,6 +8,7 @@
 	<title>NodeJS Pictionary</title>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans">
 	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/confetti.css">
 </head>
 
 <body>
@@ -20,7 +21,7 @@
 			<button id="new-game-button"><b>Host a new game</b></button>
 			<span style='margin-top: 2rem; margin-bottom: 2rem;'><b>or</b></span>
 			<input id='join-game' type='text' placeholder='Enter the game ID'>
-			<span id="game-not-found" style="display: none; color: red;">The requested game does not exist. Check the Game code and try again.</span>
+			<span id="game-not-found">The requested game does not exist. Check the Game code and try again.</span>
 		</div>
 		<div id='player-name-box' style='display: none;'>
 			<input type='text' id='player-name' placeholder='Enter a nickname'>
@@ -32,6 +33,61 @@
 		<span id="player-info"></span>
 		<main id="draw-window" style="z-index: -1;"> </main>
 		<input id='guesser-input' type='text' placeholder='What are they drawing?'>
+	</div>
+	<div id='winner-screen' class='page' style='display: none'>
+		<span id='winner-text'></span>
+		<div class="confetti">
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+			<div class="confetti-piece"></div>
+		</div>
 	</div>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
