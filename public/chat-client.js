@@ -61,6 +61,7 @@ playerName.addEventListener('keyup', (e) => {
 		gameNotFound.style.display = 'none';
 		pictionaryPage.style.display = 'block';
 		playerNameBox.style.display = 'none';
+		inGame = true;
 	}
 });
 
@@ -81,7 +82,6 @@ socket.on('game_found', () => {
 	gameNotFound.style.display = 'none';
 	playerNameBox.style.display = 'none';
 	pictionaryPage.style.display = 'block';
-	inGame = true;
 });
 
 socket.on('game_not_found', () => {

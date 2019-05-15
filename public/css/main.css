@@ -130,7 +130,7 @@ button:hover {
 	text-align: center;
 	padding: 1rem;
 	font-size: 2.5rem;
-	background-color: white;
+	background-color: rgba(255, 255, 255, 0.9);
 }
 
 #player-info {
@@ -154,22 +154,27 @@ button:hover {
 #guess-window {
 	background-color: transparent;
 	bottom: 5vh;
-	height: 300px;
+	height: 20.6rem;
 	left: 5vh;
 	overflow: auto;
 	display:flex;
 	flex-direction: column-reverse;
 	position: absolute;
-	width: 300px;
+	width: 23rem;
+	background-color: rgba(255, 255, 255, 0.3);
+	padding: 0.45rem;
+	padding-left: 0.6rem;
+	border: solid 0.3rem rgba(0, 0, 0, 0.2);
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+
+#guess-window > div > div {
+	white-space: nowrap;
 }
 
 .chat-player {
 	color: green;
-	font-size: 0.8rem;
-}
-
-.chat-guess {
-	font-size: 0.9rem;
 }
 
 ::-webkit-scrollbar {
