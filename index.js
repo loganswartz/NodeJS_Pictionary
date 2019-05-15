@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 const fs = require('fs');
 
 let connections = [];
-let games = {};
+let gameWords = {};
 let gameCode = 0;
 let wordList = [];
 
@@ -19,7 +19,7 @@ app.use(express.static('public'));
 
 // initialize word list
 fs.readFile('trimmed_word_list.json', (err, data) => {
-	if(err) {
+	if (err) {
 		throw err;
 	} else {
 		wordList = JSON.parse(data);
@@ -34,21 +34,26 @@ io.sockets.on('connection', (socket) => {
 
 	socket.emit('query_ingame');
 	socket.on('answer_ingame', (inGame) => {
-		if(inGame === true) {
+		if (inGame === true) {
 			socket.emit('quit_game');
 		}
 	});
 
 	socket.on('disconnect', () => {
-		if(games.hasOwnProperty(socket.gameCode)) {
-			games[socket.gameCode].players.splice(games[socket.gameCode].players.indexOf(socket.playerName), 1);
-			io.to(socket.gameCode).emit('active_players', getPlayerNames(gameCode));
-			if(socket.role === 'drawer') {
-				io.to(socket.gameCode).emit('quit_game');
-			}
-		}
-		//console.log(io.sockets.adapter.rooms[gameCode]);
+		let gameCode = socket.gameCode;
+
 		connections.splice(connections.indexOf(socket), 1);
+		io.to(socket.gameCode).emit('active_players', getPlayerNames(socket.gameCode));
+
+		if (socket.role === 'drawer') {
+			let allClients = getClientsFromGame(gameCode);
+			let s = allClients[[getRandomNumberInRange(0, allClients.length)]];
+
+			s.role = 'drawer';
+			s.emit('player_role', s.role);
+			s.emit('game_word', getCurrentWord(gameCode));
+		}
+
 		console.log(`Player "${socket.playerName}" has left game #${socket.gameCode}.`);
 		console.log(`Disconnected: ${connections.length} sockets connected`);
 	});
@@ -56,11 +61,9 @@ io.sockets.on('connection', (socket) => {
 	socket.on('new_game', (playerName) => {
 		// initialize game
 		gameCode = generateGameCode();
-		currentWord = getGameWord(wordList);
-		games[gameCode] = {
-			'players': [],
-			'current_word': currentWord
-		}
+		currentWord = getGameWord(wordList)
+		gameWords[gameCode] = currentWord;
+
 		console.log(`New game started (#${gameCode}) with the word "${currentWord}".`);
 
 		// initialize player
@@ -70,7 +73,6 @@ io.sockets.on('connection', (socket) => {
 		socket.score = 0;
 
 		// join player to game
-		games[gameCode].players.push(playerName);
 		socket.join(gameCode);  // this needs to be before the room broadcast
 		io.to(socket.gameCode).emit('active_players', getPlayerNames(gameCode));
 
@@ -81,7 +83,7 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('join_game', (gameCode, playerName) => {
-		if (games.hasOwnProperty(gameCode)) {
+		if (gameWords.hasOwnProperty(gameCode)) {
 			// initialize player
 			socket.gameCode = gameCode;
 			socket.playerName = playerName;
@@ -89,7 +91,6 @@ io.sockets.on('connection', (socket) => {
 			socket.score = 0;
 
 			// join player to game
-			games[gameCode].players.push(playerName);
 			socket.join(gameCode);  // this needs to be before the room broadcast
 			io.to(socket.gameCode).emit('active_players', getPlayerNames(gameCode));
 			console.log(`Player "${playerName}" has joined game #${gameCode}.`);
@@ -105,7 +106,7 @@ io.sockets.on('connection', (socket) => {
 
 	socket.on('draw_event', (line_data) => {
 		// block guessers from sending drawings to the other players
-		if(socket.role === 'drawer') {
+		if (socket.role === 'drawer') {
 			socket.broadcast.to(socket.gameCode).emit('draw_data', line_data);
 		}
 	});
@@ -117,7 +118,7 @@ function generateGameCode() {
 }
 
 function getGameWord(words) {
-	return words[getRandomNumberInRange(0, words.length-1)];
+	return words[getRandomNumberInRange(0, words.length - 1)];
 }
 
 function getRandomNumberInRange(min, max) {
@@ -125,13 +126,23 @@ function getRandomNumberInRange(min, max) {
 }
 
 function getPlayerNames(gameCode) {
-	return games[gameCode].players;
+	let sockets = getClientsFromGame(gameCode);
+
+	let players = [];
+
+	sockets.forEach((socket) => {
+		players.push(socket.playerName);
+	});
+
+	return players;
 }
 
-function getSocket(socketId) {
-	// supposedly this should allow grabbing other sockets based on events from a different socket, doesn't seem to work though
-	let namespace = null;
-	let ns = io.of(namespace || "/");
-	let socket = ns.connected[socketId];
-	return socket;
+function getClientsFromGame(gameCode) {
+	return connections.filter((socket) => {
+		return socket.gameCode === gameCode;
+	});
+}
+
+function getCurrentWord(gameCode) {
+	return gameWords[gameCode];
 }
