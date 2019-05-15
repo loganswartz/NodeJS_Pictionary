@@ -17,6 +17,7 @@ let winnerText = document.querySelector('#winner-text');
 let inGame = false;
 let guessWindow = document.querySelector('#guess-window').querySelector('div');
 let newWordButton = document.querySelector('#new-word-button');
+let timerValue = -1; // don't change this, it indicates a timer has not been started
 
 // the validated game code of this client to be shared by other files
 let clientGameCode = '';
@@ -51,7 +52,7 @@ joinGame.addEventListener('keyup', (e) => {
 });
 
 playerName.addEventListener('keyup', (e) => {
-	if(e.keyCode === 13) {
+	if(e.keyCode === 13 && playerName.value != '') {
 		if (gameInitMode === 'new') {
 			socket.emit('new_game', playerName.value);
 		} else {
@@ -105,11 +106,12 @@ socket.on('active_players', (players) => {
 	console.log(players)
 	playerInfo.innerHTML = '';
 	players.forEach((player) => {
+		console.log(player.name + ': ' + player.role);
 		if (player.role === 'drawer') {
 			playerInfo.innerHTML += `<span id="drawer">${player.name}</span>`;
 		} else {
 			playerInfo.innerHTML += `<span>${player.name}</span>`;
-		}		
+		}
 	});
 });
 
@@ -156,6 +158,7 @@ socket.on('winner', (playerName) => {
 	hide_all_pages();
 	winnerPage.style.display = 'block';
 	winnerText.innerHTML = playerName + ' was the winner!';
+	timer(10);
 })
 
 socket.on('display_guess', (playerName, guess) => {
@@ -175,5 +178,21 @@ socket.on('start_new_game', () => {
 	gameNotFound.style.display = 'none';
 	pictionaryPage.style.display = 'block';
 	playerNameBox.style.display = 'none';
+	guessWindow.innerHTML = '';
 	clear();
 });
+
+function sleep(ms) {
+	return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function timer(duration) {
+	for(let i=duration; i>=0; i--) {
+		setTimerValue(i);
+		await sleep(1000);
+	}
+}
+
+function setTimerValue(value) {
+	document.querySelector('#timer').innerHTML = value;
+}

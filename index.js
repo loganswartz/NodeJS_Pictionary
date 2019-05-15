@@ -175,9 +175,13 @@ function getCurrentWord(gameCode) {
 
 function startNewGame(socket) {
 	gameWords[socket.gameCode] = getGameWord(wordList);
+	getClientsFromGame(socket.gameCode).forEach((s) => {
+		s.role = 'guesser';
+	})
 	io.to(socket.gameCode).emit('player_role', 'guesser');   // set all players to guessers and then immediately set the previous winner to a drawer
 	socket.role = 'drawer';
 	socket.emit('player_role', socket.role);
 	socket.emit('game_word', getCurrentWord(socket.gameCode));
 	io.to(socket.gameCode).emit('start_new_game');
+	io.to(socket.gameCode).emit('active_players', getActivePlayers(socket.gameCode));
 }
