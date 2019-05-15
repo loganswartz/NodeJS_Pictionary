@@ -47,11 +47,13 @@ io.sockets.on('connection', (socket) => {
 
 		if (socket.role === 'drawer') {
 			let allClients = getClientsFromGame(gameCode);
-			let s = allClients[[getRandomNumberInRange(0, allClients.length)]];
+			if(allClients.length > 0){
+				let s = allClients[[getRandomNumberInRange(0, allClients.length)]];
 
-			s.role = 'drawer';
-			s.emit('player_role', s.role);
-			s.emit('game_word', getCurrentWord(gameCode));
+				s.role = 'drawer';
+				s.emit('player_role', s.role);
+				s.emit('game_word', getCurrentWord(gameCode));
+			}
 		}
 
 		console.log(`Player "${socket.playerName}" has left game #${socket.gameCode}.`);

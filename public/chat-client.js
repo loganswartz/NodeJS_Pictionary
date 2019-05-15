@@ -18,6 +18,12 @@ let inGame = false;
 let clientGameCode = '';
 let gameInitMode = '';
 
+function clear_inputs() {
+	playerName.value = '';
+	joinGame.value = '';
+	guesserInput.value = '';
+}
+
 newGameButton.addEventListener('click', () => {
 	loginBox.style.display = 'none';
 	playerNameBox.style.display = 'block';
