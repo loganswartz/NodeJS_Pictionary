@@ -190,3 +190,8 @@ button:hover {
 	left: 50%;
 	transform: translateX(-50%);
 }
+
+#drawer {
+	color: crimson;
+	font-size: 1.3rem;
+}

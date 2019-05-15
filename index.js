@@ -43,7 +43,6 @@ io.sockets.on('connection', (socket) => {
 		let gameCode = socket.gameCode;
 
 		connections.splice(connections.indexOf(socket), 1);
-		io.to(socket.gameCode).emit('active_players', getPlayerNames(socket.gameCode));
 
 		if (socket.role === 'drawer') {
 			let allClients = getClientsFromGame(gameCode);
@@ -58,6 +57,7 @@ io.sockets.on('connection', (socket) => {
 
 		// broadcast that this socket has left the game
 		socket.broadcast.to(socket.gameCode).emit('player_left', socket.playerName);
+		io.to(socket.gameCode).emit('active_players', getActivePlayers(socket.gameCode));
 
 		console.log(`Game #${socket.gameCode}: Player "${socket.playerName}" has left.`);
 		console.log(`Disconnected: ${connections.length} sockets connected`);
@@ -79,7 +79,7 @@ io.sockets.on('connection', (socket) => {
 
 		// join player to game
 		socket.join(gameCode);  // this needs to be before the room broadcast
-		io.to(socket.gameCode).emit('active_players', getPlayerNames(gameCode));
+		io.to(socket.gameCode).emit('active_players', getActivePlayers(gameCode));
 
 		// tell client what to do
 		socket.emit('game_word', currentWord);
@@ -97,7 +97,7 @@ io.sockets.on('connection', (socket) => {
 
 			// join player to game
 			socket.join(gameCode);  // this needs to be before the room broadcast
-			io.to(socket.gameCode).emit('active_players', getPlayerNames(gameCode));
+			io.to(socket.gameCode).emit('active_players', getActivePlayers(gameCode));
 			console.log(`Game #${gameCode}: Player "${playerName}" has joined.`);
 
 			// tell client what to do
@@ -148,13 +148,16 @@ function getRandomNumberInRange(min, max) {
 	return Math.floor(Math.random() * (max - min) + min);
 }
 
-function getPlayerNames(gameCode) {
+function getActivePlayers(gameCode) {
 	let sockets = getClientsFromGame(gameCode);
 
 	let players = [];
 
 	sockets.forEach((socket) => {
-		players.push(socket.playerName);
+		players.push({
+			'name': socket.playerName,
+			'role': socket.role
+		});
 	});
 
 	return players;

@@ -105,7 +105,11 @@ socket.on('active_players', (players) => {
 	console.log(players)
 	playerInfo.innerHTML = '';
 	players.forEach((player) => {
-		playerInfo.innerHTML += `<span>${player}</span>`;
+		if (player.role === 'drawer') {
+			playerInfo.innerHTML += `<span id="drawer">${player.name}</span>`;
+		} else {
+			playerInfo.innerHTML += `<span>${player.name}</span>`;
+		}		
 	});
 });
 
