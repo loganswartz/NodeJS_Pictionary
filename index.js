@@ -59,7 +59,7 @@ io.sockets.on('connection', (socket) => {
 		// broadcast that this socket has left the game
 		socket.broadcast.to(socket.gameCode).emit('player_left', socket.playerName);
 
-		console.log(`Player "${socket.playerName}" has left game #${socket.gameCode}.`);
+		console.log(`Game #${socket.gameCode}: Player "${socket.playerName}" has left.`);
 		console.log(`Disconnected: ${connections.length} sockets connected`);
 	});
 
@@ -98,7 +98,7 @@ io.sockets.on('connection', (socket) => {
 			// join player to game
 			socket.join(gameCode);  // this needs to be before the room broadcast
 			io.to(socket.gameCode).emit('active_players', getPlayerNames(gameCode));
-			console.log(`Player "${playerName}" has joined game #${gameCode}.`);
+			console.log(`Game #${gameCode}: Player "${playerName}" has joined.`);
 
 			// tell client what to do
 			socket.emit('player_role', socket.role);
@@ -120,8 +120,9 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('make_guess', (guess) => {
-		if(guess === getCurrentWord(socket.gameCode)) {
+		if(guess.toLowerCase() === getCurrentWord(socket.gameCode).toLowerCase()) {
 			io.to(socket.gameCode).emit('winner', socket.playerName);
+			console.log(`Game #${socket.gameCode}: ${socket.playerName} won! (word was "${getCurrentWord(socket.gameCode)}")`);
 		} else {
 			io.to(socket.gameCode).emit('display_guess', socket.playerName, guess);
 		}
