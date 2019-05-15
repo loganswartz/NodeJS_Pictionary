@@ -138,6 +138,7 @@ socket.on('player_role', (role) => {
 		pictionaryPage.style.display = 'block';
 		drawInfo.style.display = 'none';
 		guesserInput.style.display = 'block';
+		newWordButton.style.display = 'none';
 		// disable drawing if guesser
 		mouseDragged = function() {return};
 	}
