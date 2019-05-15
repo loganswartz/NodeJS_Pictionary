@@ -125,7 +125,7 @@ io.sockets.on('connection', (socket) => {
 			console.log(`Game #${socket.gameCode}: ${socket.playerName} won! (word was "${getCurrentWord(socket.gameCode)}")`);
 			setTimeout(startNewGame, 10000, socket);
 		} else {
-			// send toast showing incorrect guess
+			io.to(socket.gameCode).emit('display_guess', socket.playerName, guess);
 		}
 	});
 });
