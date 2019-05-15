@@ -108,3 +108,11 @@ socket.on('quit_game', () => {
 socket.on('query_ingame', () => {
 	socket.emit('answer_ingame', inGame);
 });
+
+socket.on('player_joined', (name) => {
+	M.toast({html: `${name} has joined the game`});
+});
+
+socket.on('player_left', (name) => {
+	M.toast({html: `${name} has left the game`});
+});
