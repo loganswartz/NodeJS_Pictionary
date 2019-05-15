@@ -16,6 +16,7 @@ let winnerPage = document.querySelector('#winner-screen');
 let winnerText = document.querySelector('#winner-text');
 let inGame = false;
 let guessWindow = document.querySelector('#guess-window').querySelector('div');
+let newWordButton = document.querySelector('#new-word-button');
 
 // the validated game code of this client to be shared by other files
 let clientGameCode = '';
@@ -70,6 +71,10 @@ guesserInput.addEventListener('keyup', (e) => {
 	}
 });
 
+newWordButton.addEventListener('click', (e) => {
+	socket.emit('request_new_word');
+});
+
 socket.on('game_found', () => {
 	hide_all_pages();
 	loginPage.style.display = 'none';
@@ -109,6 +114,7 @@ socket.on('player_role', (role) => {
 		pictionaryPage.style.display = 'block';
 		drawInfo.style.display = 'block';
 		guesserInput.style.display = 'none';
+		newWordButton.style.display = 'block';
 		// enable drawing if drawer
 		mouseDragged = function() {
 			strokeWeight(stroke_weight);

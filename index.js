@@ -128,6 +128,12 @@ io.sockets.on('connection', (socket) => {
 			io.to(socket.gameCode).emit('display_guess', socket.playerName, guess);
 		}
 	});
+
+	socket.on('request_new_word', () => {
+		currentWord = getGameWord(wordList)
+		gameWords[socket.gameCode] = currentWord;
+		socket.emit('game_word', currentWord);
+	});
 });
 
 function generateGameCode() {

@@ -182,3 +182,11 @@ button:hover {
 	bottom: 10%;
 	right:7%;  
 }
+
+#new-word-button {
+	display: none;
+	position: absolute;
+	top: 15vh;
+	left: 50%;
+	transform: translateX(-50%);
+}
