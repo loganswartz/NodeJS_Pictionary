@@ -175,3 +175,10 @@ button:hover {
 ::-webkit-scrollbar {
     background: transparent;
 }
+
+#toast-container {
+	top: auto !important;
+	left: auto !important;
+	bottom: 10%;
+	right:7%;  
+}
