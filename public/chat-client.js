@@ -131,8 +131,18 @@ socket.on('query_ingame', () => {
 	socket.emit('answer_ingame', inGame);
 });
 
+
 socket.on('winner', (playerName) => {
 	pictionary.style.display = 'none';
 	winnerScreen.style.display = 'block';
 	winnerText.innerHTML = playerName + ' was the winner!';
 })
+
+socket.on('player_joined', (name) => {
+	M.toast({html: `${name} has joined the game`});
+});
+
+socket.on('player_left', (name) => {
+	M.toast({html: `${name} has left the game`});
+});
+

@@ -56,6 +56,9 @@ io.sockets.on('connection', (socket) => {
 			}
 		}
 
+		// broadcast that this socket has left the game
+		socket.broadcast.to(socket.gameCode).emit('player_left', socket.playerName);
+
 		console.log(`Player "${socket.playerName}" has left game #${socket.gameCode}.`);
 		console.log(`Disconnected: ${connections.length} sockets connected`);
 	});
@@ -101,6 +104,9 @@ io.sockets.on('connection', (socket) => {
 			socket.emit('player_role', socket.role);
 			socket.emit('game_found');
 			socket.emit('game_code', gameCode);
+
+			// broadcast that this socket has joined the game
+			socket.broadcast.to(socket.gameCode).emit('player_joined', socket.playerName);
 		} else {
 			socket.emit('game_not_found');
 		}
