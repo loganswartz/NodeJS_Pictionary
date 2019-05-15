@@ -123,7 +123,7 @@ io.sockets.on('connection', (socket) => {
 		if(guess === getCurrentWord(socket.gameCode)) {
 			io.to(socket.gameCode).emit('winner', socket.playerName);
 		} else {
-			// send toast showing incorrect guess
+			io.to(socket.gameCode).emit('display_guess', socket.playerName, guess);
 		}
 	});
 });

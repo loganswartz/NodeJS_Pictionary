@@ -15,6 +15,7 @@ let playerInfo = document.querySelector('#player-info');
 let winnerScreen = document.querySelector('#winner-screen');
 let winnerText = document.querySelector('#winner-text');
 let inGame = false;
+let guessWindow = document.querySelector('#guess-window').querySelector('div');
 
 // the validated game code of this client to be shared by other files
 let clientGameCode = '';
@@ -137,6 +138,10 @@ socket.on('winner', (playerName) => {
 	winnerScreen.style.display = 'block';
 	winnerText.innerHTML = playerName + ' was the winner!';
 })
+
+socket.on('display_guess', (playerName, guess) => {
+	guessWindow.innerHTML += `<div><span class="chat-player">${playerName}:</span> <span class="chat-guess">${guess}</span></div>`;
+});
 
 socket.on('player_joined', (name) => {
 	M.toast({html: `${name} has joined the game`});

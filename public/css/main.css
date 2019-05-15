@@ -150,3 +150,28 @@ button:hover {
 	display: none;
 	color: red;
 }
+
+#guess-window {
+	background-color: transparent;
+	bottom: 5vh;
+	height: 300px;
+	left: 5vh;
+	overflow: auto;
+	display:flex;
+	flex-direction: column-reverse;
+	position: absolute;
+	width: 300px;
+}
+
+.chat-player {
+	color: green;
+	font-size: 0.8rem;
+}
+
+.chat-guess {
+	font-size: 0.9rem;
+}
+
+::-webkit-scrollbar {
+    background: transparent;
+}
