@@ -18,6 +18,7 @@ let winnerWord = document.querySelector('#winner-word');
 let inGame = false;
 let guessWindow = document.querySelector('#guess-window').querySelector('div');
 let newWordButton = document.querySelector('#new-word-button');
+let sideBar = document.querySelector('.sidebar');
 let timerValue = -1; // don't change this, it indicates a timer has not been started
 
 // the validated game code of this client to be shared by other files
@@ -124,6 +125,7 @@ socket.on('player_role', (role) => {
 		drawInfo.style.display = 'block';
 		guesserInput.style.display = 'none';
 		newWordButton.style.display = 'block';
+		
 		// enable drawing if drawer
 		mouseDragged = function() {
 			let stroke_color = colorInput.value;
@@ -146,6 +148,7 @@ socket.on('player_role', (role) => {
 		drawInfo.style.display = 'none';
 		guesserInput.style.display = 'block';
 		newWordButton.style.display = 'none';
+		sideBar.style.display = 'none';
 		// disable drawing if guesser
 		mouseDragged = function() {return};
 	}
