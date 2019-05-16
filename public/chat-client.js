@@ -78,6 +78,10 @@ newWordButton.addEventListener('click', (e) => {
 	socket.emit('request_new_word');
 });
 
+clear.addEventListener('click',()=>{
+	background(240,248,255);
+})
+
 socket.on('game_found', () => {
 	hide_all_pages();
 	loginPage.style.display = 'none';
@@ -122,6 +126,8 @@ socket.on('player_role', (role) => {
 		newWordButton.style.display = 'block';
 		// enable drawing if drawer
 		mouseDragged = function() {
+			let stroke_color = colorInput.value;
+	        let stroke_weight = weight.value;
 			strokeWeight(stroke_weight);
 			stroke(stroke_color);
 			line(mouseX, mouseY, pmouseX, pmouseY);

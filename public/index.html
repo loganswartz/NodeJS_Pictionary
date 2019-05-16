@@ -38,6 +38,21 @@
 		<span id="player-info"></span>
 		<span id="guess-window"><div></div></span>
 		<main id="draw-window" style="z-index: -1;"> </main>
+		<div class="sidebar">
+    		<ul>
+        		<li>
+            		<label for ="color">Color:</label>
+            		<input type="color" id="color" />
+        		</li>
+        		<li>
+            		<label for="weight">Stroke:</label>
+            		<input type="range" id="weight" min="2" max="10" />
+        		</li>
+        		<li>
+            		<button id="clear">CLEAR<i class="fa fa-trash"></i></button>
+        		</li>
+   			 </ul>
+		</div>
 		<input class="browser-default" id='guesser-input' type='text' placeholder='What are they drawing?'>
 	</div>
 	<div id='winner-screen' class='page' style='display: none'>
