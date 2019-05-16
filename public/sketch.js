@@ -1,9 +1,8 @@
 let canvas;
 let stroke_color;
 let stroke_weight;
-const colorInput = document.getElementById('color');
-const weight = document.getElementById('weight');
-const clear = document.getElementById('clear');
+let colorInput = document.querySelector('#color');
+let weight = document.querySelector('#weight');
 
 
 function setup() {

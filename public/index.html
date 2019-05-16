@@ -38,20 +38,20 @@
 		<span id="player-info"></span>
 		<span id="guess-window"><div></div></span>
 		<main id="draw-window" style="z-index: -1;"> </main>
-		<div class="sidebar">
-    		<ul>
-        		<li>
-            		<label for ="color">Color:</label>
-            		<input type="color" id="color" />
-        		</li>
-        		<li>
-            		<label for="weight">Stroke:</label>
-            		<input type="range" id="weight" min="2" max="10" />
-        		</li>
-        		<li>
-            		<button id="clear">CLEAR<i class="fa fa-trash"></i></button>
-        		</li>
-   			 </ul>
+		<div id='draw-controls' class="sidebar">
+			<ul>
+				<li>
+					<label for ="color">Color:</label>
+					<input type="color" id="color" />
+				</li>
+				<li>
+					<label for="weight">Stroke:</label>
+					<input type="range" id="weight" min="2" max="10" />
+				</li>
+				<li>
+					<button id="clear-button">CLEAR<i class="fa fa-trash"></i></button>
+				</li>
+			</ul>
 		</div>
 		<input class="browser-default" id='guesser-input' type='text' placeholder='What are they drawing?'>
 	</div>
@@ -118,7 +118,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.6/p5.js"></script>
 	
-    <!-- Materialize compiled and minified JavaScript -->
+	<!-- Materialize compiled and minified JavaScript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 	
 	<script src="chat-client.js"></script>

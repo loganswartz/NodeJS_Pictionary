@@ -130,11 +130,20 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('request_new_word', () => {
-		currentWord = getGameWord(wordList)
-		gameWords[socket.gameCode] = currentWord;
-		socket.emit('game_word', currentWord);
-		io.to(socket.gameCode).emit('clear_draw_screen');
+		if(socket.role === 'drawer') {   // prevent non-drawers from changing the word
+			currentWord = getGameWord(wordList)
+			gameWords[socket.gameCode] = currentWord;
+			socket.emit('game_word', currentWord);
+			io.to(socket.gameCode).emit('clear_draw_screen');
+		}
 	});
+
+	socket.on('clear_draw_screen', () => {
+		if(socket.role === 'drawer') {
+			io.to(socket.gameCode).emit('clear_draw_screen');
+			// drawer (and only the drawer) can request all screens to be cleared
+		}
+	})
 });
 
 function generateGameCode() {

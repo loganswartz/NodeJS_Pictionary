@@ -15,10 +15,12 @@ let playerInfo = document.querySelector('#player-info');
 let winnerPage = document.querySelector('#winner-screen');
 let winnerText = document.querySelector('#winner-text');
 let winnerWord = document.querySelector('#winner-word');
-let inGame = false;
 let guessWindow = document.querySelector('#guess-window').querySelector('div');
 let newWordButton = document.querySelector('#new-word-button');
-let timerValue = -1; // don't change this, it indicates a timer has not been started
+let clearButton = document.querySelector('#clear-button');
+let drawControls = document.querySelector('#draw-controls');
+
+let inGame = false;
 
 // the validated game code of this client to be shared by other files
 let clientGameCode = '';
@@ -78,8 +80,8 @@ newWordButton.addEventListener('click', (e) => {
 	socket.emit('request_new_word');
 });
 
-clear.addEventListener('click',()=>{
-	background(240,248,255);
+clearButton.addEventListener('click',()=>{
+	socket.emit('clear_draw_screen');
 })
 
 socket.on('game_found', () => {
@@ -124,10 +126,11 @@ socket.on('player_role', (role) => {
 		drawInfo.style.display = 'block';
 		guesserInput.style.display = 'none';
 		newWordButton.style.display = 'block';
+		drawControls.style.display = 'block';
 		// enable drawing if drawer
 		mouseDragged = function() {
 			let stroke_color = colorInput.value;
-	        let stroke_weight = weight.value;
+			let stroke_weight = weight.value;
 			strokeWeight(stroke_weight);
 			stroke(stroke_color);
 			line(mouseX, mouseY, pmouseX, pmouseY);
@@ -146,6 +149,7 @@ socket.on('player_role', (role) => {
 		drawInfo.style.display = 'none';
 		guesserInput.style.display = 'block';
 		newWordButton.style.display = 'none';
+		drawControls.style.display = 'none';
 		// disable drawing if guesser
 		mouseDragged = function() {return};
 	}
