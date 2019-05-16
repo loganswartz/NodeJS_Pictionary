@@ -120,7 +120,9 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	socket.on('make_guess', (guess) => {
-		if(guess.toLowerCase() === getCurrentWord(socket.gameCode).toLowerCase()) {
+		if(guess === '') {
+			return;
+		} else if(guess.toLowerCase() === getCurrentWord(socket.gameCode).toLowerCase()) {
 			io.to(socket.gameCode).emit('winner', socket.playerName, getCurrentWord(socket.gameCode));
 			console.log(`Game #${socket.gameCode}: ${socket.playerName} won! (word was "${getCurrentWord(socket.gameCode)}")`);
 			setTimeout(startNewGame, 10000, socket);
